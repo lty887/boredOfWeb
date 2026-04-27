@@ -40,26 +40,75 @@
         
         header {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 8rem 2rem;
             position: relative;
             overflow: hidden;
+            background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20geometric%20pattern%20with%20soft%20colors%20and%20subtle%20gradient&image_size=landscape_16_9');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 1s ease;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+        
+        header.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         h1 {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 800;
             margin-bottom: 1rem;
             z-index: 2;
             position: relative;
-            color: var(--text-color);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 0.3s;
         }
         
-        p {
-            font-size: 1.2rem;
+        h1.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        header p {
+            font-size: 1.5rem;
             max-width: 600px;
             margin: 0 auto;
             z-index: 2;
             position: relative;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 0.6s;
+        }
+        
+        header p.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .container p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-color);
         }
         
         .container {
@@ -80,16 +129,16 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             padding: 2rem;
-            transition: var(--transition);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px) scale(0.95);
         }
         
         .website-card.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
         
         .website-card:hover {
@@ -116,12 +165,14 @@
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: var(--primary-color);
+            transition: all 0.3s ease;
         }
         
         .website-card p {
             font-size: 1rem;
             margin-bottom: 1.5rem;
             color: var(--text-color);
+            transition: all 0.3s ease;
         }
         
         .website-card a {
@@ -131,12 +182,39 @@
             color: white;
             text-decoration: none;
             border-radius: var(--border-radius);
-            transition: var(--transition);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .website-card a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
         
         .website-card a:hover {
             background-color: var(--secondary-color);
             transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .website-card a:hover::before {
+            left: 100%;
+        }
+        
+        .website-card:hover h2 {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+        
+        .website-card:hover p {
+            transform: translateX(3px);
         }
         
         footer {
@@ -147,16 +225,7 @@
             color: white;
         }
         
-        /* 算法艺术背景 */
-        #art-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.3;
-        }
+
         
         @media (max-width: 768px) {
             header {
@@ -179,7 +248,6 @@
 </head>
 <body>
     <header>
-        <canvas id="art-canvas"></canvas>
         <h1>无聊的网页集合</h1>
         <p>探索一系列专为打发时间而设计的无聊网页</p>
     </header>
@@ -228,72 +296,30 @@
         <p>© 2026 无聊的网页集合</p>
     </footer>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script>
-        // 算法艺术背景
-        let particles = [];
-        let noiseScale = 0.01;
-        let noiseStrength = 2;
-        
-        function setup() {
-            const canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('art-canvas');
-            noStroke();
-            
-            // 创建粒子
-            for (let i = 0; i < 200; i++) {
-                particles.push({
-                    x: random(width),
-                    y: random(height),
-                    size: random(1, 3),
-                    speed: random(0.5, 2),
-                    color: color(random(100, 255), random(100, 255), random(100, 255), 100)
-                });
-            }
-        }
-        
-        function draw() {
-            // 半透明背景，创建轨迹效果
-            background(248, 249, 250, 10);
-            
-            // 更新和绘制粒子
-            for (let p of particles) {
-                // 使用Perlin噪声控制粒子方向
-                let noiseValue = noise(p.x * noiseScale, p.y * noiseScale, frameCount * 0.001);
-                let angle = noiseValue * TWO_PI * noiseStrength;
-                
-                // 更新粒子位置
-                p.x += cos(angle) * p.speed;
-                p.y += sin(angle) * p.speed;
-                
-                // 边界检测
-                if (p.x < 0) p.x = width;
-                if (p.x > width) p.x = 0;
-                if (p.y < 0) p.y = height;
-                if (p.y > height) p.y = 0;
-                
-                // 绘制粒子
-                fill(p.color);
-                ellipse(p.x, p.y, p.size);
-            }
-        }
-        
-        // 响应窗口大小变化
-        function windowResized() {
-            resizeCanvas(windowWidth, windowHeight);
-        }
-        
         // 滚动动画效果
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.website-card');
+            const header = document.querySelector('header');
+            const title = document.querySelector('h1');
+            const subtitle = document.querySelector('header p');
+            
+            // 添加入场动画类
+            setTimeout(() => {
+                header.classList.add('visible');
+                title.classList.add('visible');
+                subtitle.classList.add('visible');
+            }, 100);
             
             function checkVisibility() {
-                cards.forEach(card => {
+                cards.forEach((card, index) => {
                     const rect = card.getBoundingClientRect();
                     const windowHeight = window.innerHeight;
                     
-                    if (rect.top < windowHeight * 0.85) {
-                        card.classList.add('visible');
+                    if (rect.top < windowHeight * 0.85 && !card.classList.contains('visible')) {
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                        }, index * 150);
                     }
                 });
             }
