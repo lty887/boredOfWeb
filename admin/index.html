@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 无聊的网页集合</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">无聊的网页集合</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">仪表盘</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#websites">网页管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">设置管理</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="user-name">管理员</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">个人资料</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logout-btn">退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- 仪表盘 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h4>仪表盘</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">网页数量</h5>
+                                        <p class="card-text" id="website-count">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 网页管理 -->
+        <div class="row mb-4" id="websites">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h4>网页管理</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-website-modal">添加网页</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>标题</th>
+                                        <th>描述</th>
+                                        <th>链接</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="websites-table-body">
+                                    <!-- 网页数据将通过JavaScript动态填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置管理 -->
+        <div class="row mb-4" id="settings">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h4>设置管理</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-setting-modal">添加设置</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>键</th>
+                                        <th>值</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="settings-table-body">
+                                    <!-- 设置数据将通过JavaScript动态填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加网页模态框 -->
+    <div class="modal fade" id="add-website-modal" tabindex="-1" aria-labelledby="add-website-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-website-modal-label">添加网页</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-website-form">
+                        <div class="mb-3">
+                            <label for="website-title" class="form-label">标题</label>
+                            <input type="text" class="form-control" id="website-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="website-description" class="form-label">描述</label>
+                            <textarea class="form-control" id="website-description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="website-url" class="form-label">链接</label>
+                            <input type="url" class="form-control" id="website-url" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-website-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑网页模态框 -->
+    <div class="modal fade" id="edit-website-modal" tabindex="-1" aria-labelledby="edit-website-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-website-modal-label">编辑网页</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-website-form">
+                        <input type="hidden" id="edit-website-id">
+                        <div class="mb-3">
+                            <label for="edit-website-title" class="form-label">标题</label>
+                            <input type="text" class="form-control" id="edit-website-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-website-description" class="form-label">描述</label>
+                            <textarea class="form-control" id="edit-website-description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-website-url" class="form-label">链接</label>
+                            <input type="url" class="form-control" id="edit-website-url" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="update-website-btn">更新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加设置模态框 -->
+    <div class="modal fade" id="add-setting-modal" tabindex="-1" aria-labelledby="add-setting-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-setting-modal-label">添加设置</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-setting-form">
+                        <div class="mb-3">
+                            <label for="setting-key" class="form-label">键</label>
+                            <input type="text" class="form-control" id="setting-key" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="setting-value" class="form-label">值</label>
+                            <input type="text" class="form-control" id="setting-value" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-setting-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑设置模态框 -->
+    <div class="modal fade" id="edit-setting-modal" tabindex="-1" aria-labelledby="edit-setting-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-setting-modal-label">编辑设置</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-setting-form">
+                        <input type="hidden" id="edit-setting-key">
+                        <div class="mb-3">
+                            <label for="edit-setting-key-display" class="form-label">键</label>
+                            <input type="text" class="form-control" id="edit-setting-key-display" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-setting-value" class="form-label">值</label>
+                            <input type="text" class="form-control" id="edit-setting-value" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="update-setting-btn">更新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            if (!localStorage.getItem('token')) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 显示用户名
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('user-name').textContent = user.username;
+            }
+
+            // 退出登录
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            });
+
+            // 加载网页数据
+            loadWebsites();
+            // 加载设置数据
+            loadSettings();
+
+            // 保存网页
+            document.getElementById('save-website-btn').addEventListener('click', function() {
+                const form = document.getElementById('add-website-form');
+                if (form.checkValidity()) {
+                    const website = {
+                        title: document.getElementById('website-title').value,
+                        description: document.getElementById('website-description').value,
+                        url: document.getElementById('website-url').value
+                    };
+
+                    addWebsite(website);
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // 更新网页
+            document.getElementById('update-website-btn').addEventListener('click', function() {
+                const form = document.getElementById('edit-website-form');
+                if (form.checkValidity()) {
+                    const website = {
+                        id: document.getElementById('edit-website-id').value,
+                        title: document.getElementById('edit-website-title').value,
+                        description: document.getElementById('edit-website-description').value,
+                        url: document.getElementById('edit-website-url').value
+                    };
+
+                    updateWebsite(website);
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // 保存设置
+            document.getElementById('save-setting-btn').addEventListener('click', function() {
+                const form = document.getElementById('add-setting-form');
+                if (form.checkValidity()) {
+                    const setting = {
+                        key: document.getElementById('setting-key').value,
+                        value: document.getElementById('setting-value').value
+                    };
+
+                    addSetting(setting);
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // 更新设置
+            document.getElementById('update-setting-btn').addEventListener('click', function() {
+                const form = document.getElementById('edit-setting-form');
+                if (form.checkValidity()) {
+                    const setting = {
+                        key: document.getElementById('edit-setting-key').value,
+                        value: document.getElementById('edit-setting-value').value
+                    };
+
+                    updateSetting(setting);
+                } else {
+                    form.reportValidity();
+                }
+            });
+        });
+
+        // 加载网页数据
+        function loadWebsites() {
+            fetch('http://localhost:8000/api/websites', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    document.getElementById('website-count').textContent = data.length;
+                    renderWebsites(data);
+                }
+            })
+            .catch(error => {
+                console.error('加载网页数据失败:', error);
+            });
+        }
+
+        // 渲染网页数据
+        function renderWebsites(websites) {
+            const tbody = document.getElementById('websites-table-body');
+            tbody.innerHTML = '';
+
+            websites.forEach(website => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${website.id}</td>
+                    <td>${website.title}</td>
+                    <td>${website.description}</td>
+                    <td><a href="${website.url}" target="_blank">${website.url}</a></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary edit-website-btn" data-id="${website.id}">编辑</button>
+                        <button class="btn btn-sm btn-danger delete-website-btn" data-id="${website.id}">删除</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 绑定编辑按钮事件
+            document.querySelectorAll('.edit-website-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    editWebsite(id);
+                });
+            });
+
+            // 绑定删除按钮事件
+            document.querySelectorAll('.delete-website-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    if (confirm('确定要删除这个网页吗？')) {
+                        deleteWebsite(id);
+                    }
+                });
+            });
+        }
+
+        // 添加网页
+        function addWebsite(website) {
+            fetch('http://localhost:8000/api/websites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(website)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('add-website-modal'));
+                    modal.hide();
+                    // 清空表单
+                    document.getElementById('add-website-form').reset();
+                    // 重新加载数据
+                    loadWebsites();
+                    // 显示成功消息
+                    alert('网页添加成功！');
+                } else if (data.error) {
+                    alert('添加失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('添加网页失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+
+        // 编辑网页
+        function editWebsite(id) {
+            fetch(`http://localhost:8000/api/websites/${id}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    document.getElementById('edit-website-id').value = data.id;
+                    document.getElementById('edit-website-title').value = data.title;
+                    document.getElementById('edit-website-description').value = data.description;
+                    document.getElementById('edit-website-url').value = data.url;
+                    // 打开模态框
+                    const modal = new bootstrap.Modal(document.getElementById('edit-website-modal'));
+                    modal.show();
+                }
+            })
+            .catch(error => {
+                console.error('获取网页数据失败:', error);
+            });
+        }
+
+        // 更新网页
+        function updateWebsite(website) {
+            fetch(`http://localhost:8000/api/websites/${website.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(website)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('edit-website-modal'));
+                    modal.hide();
+                    // 重新加载数据
+                    loadWebsites();
+                    // 显示成功消息
+                    alert('网页更新成功！');
+                } else if (data.error) {
+                    alert('更新失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('更新网页失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+
+        // 删除网页
+        function deleteWebsite(id) {
+            fetch(`http://localhost:8000/api/websites/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // 重新加载数据
+                    loadWebsites();
+                    // 显示成功消息
+                    alert('网页删除成功！');
+                } else if (data.error) {
+                    alert('删除失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('删除网页失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+
+        // 加载设置数据
+        function loadSettings() {
+            fetch('http://localhost:8000/api/settings', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    renderSettings(data);
+                }
+            })
+            .catch(error => {
+                console.error('加载设置数据失败:', error);
+            });
+        }
+
+        // 渲染设置数据
+        function renderSettings(settings) {
+            const tbody = document.getElementById('settings-table-body');
+            tbody.innerHTML = '';
+
+            settings.forEach(setting => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${setting.id}</td>
+                    <td>${setting.key}</td>
+                    <td>${setting.value}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary edit-setting-btn" data-key="${setting.key}">编辑</button>
+                        <button class="btn btn-sm btn-danger delete-setting-btn" data-key="${setting.key}">删除</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 绑定编辑按钮事件
+            document.querySelectorAll('.edit-setting-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.getAttribute('data-key');
+                    editSetting(key);
+                });
+            });
+
+            // 绑定删除按钮事件
+            document.querySelectorAll('.delete-setting-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.getAttribute('data-key');
+                    if (confirm('确定要删除这个设置吗？')) {
+                        deleteSetting(key);
+                    }
+                });
+            });
+        }
+
+        // 添加设置
+        function addSetting(setting) {
+            fetch('http://localhost:8000/api/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(setting)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('add-setting-modal'));
+                    modal.hide();
+                    // 清空表单
+                    document.getElementById('add-setting-form').reset();
+                    // 重新加载数据
+                    loadSettings();
+                    // 显示成功消息
+                    alert('设置添加成功！');
+                } else if (data.error) {
+                    alert('添加失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('添加设置失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+
+        // 编辑设置
+        function editSetting(key) {
+            fetch(`http://localhost:8000/api/settings/${key}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    document.getElementById('edit-setting-key').value = data.key;
+                    document.getElementById('edit-setting-key-display').value = data.key;
+                    document.getElementById('edit-setting-value').value = data.value;
+                    // 打开模态框
+                    const modal = new bootstrap.Modal(document.getElementById('edit-setting-modal'));
+                    modal.show();
+                }
+            })
+            .catch(error => {
+                console.error('获取设置数据失败:', error);
+            });
+        }
+
+        // 更新设置
+        function updateSetting(setting) {
+            fetch(`http://localhost:8000/api/settings/${setting.key}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(setting)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('edit-setting-modal'));
+                    modal.hide();
+                    // 重新加载数据
+                    loadSettings();
+                    // 显示成功消息
+                    alert('设置更新成功！');
+                } else if (data.error) {
+                    alert('更新失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('更新设置失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+
+        // 删除设置
+        function deleteSetting(key) {
+            fetch(`http://localhost:8000/api/settings/${key}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // 重新加载数据
+                    loadSettings();
+                    // 显示成功消息
+                    alert('设置删除成功！');
+                } else if (data.error) {
+                    alert('删除失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('删除设置失败:', error);
+                alert('服务器错误，请稍后重试');
+            });
+        }
+    </script>
+</body>
+</html>

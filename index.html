@@ -253,42 +253,8 @@
     </header>
     
     <div class="container">
-        <div class="websites-grid">
-            <div class="website-card">
-                <h2>随机点击游戏</h2>
-                <p>点击屏幕上随机出现的按钮，看你能多快点击到它们。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
-            
-            <div class="website-card">
-                <h2>数字计数</h2>
-                <p>从1开始，一直数到你想停止为止。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
-            
-            <div class="website-card">
-                <h2>颜色变化器</h2>
-                <p>点击按钮，随机改变页面背景颜色。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
-            
-            <div class="website-card">
-                <h2>文字生成器</h2>
-                <p>随机生成无意义的句子，打发时间的好工具。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
-            
-            <div class="website-card">
-                <h2>粒子效果</h2>
-                <p>观看屏幕上随机运动的粒子，放松心情。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
-            
-            <div class="website-card">
-                <h2>时钟</h2>
-                <p>一个简单的数字时钟，显示当前时间。</p>
-                <a href="#" target="_blank">访问</a>
-            </div>
+        <div class="websites-grid" id="websites-grid">
+            <!-- 网页卡片将通过JavaScript动态生成 -->
         </div>
     </div>
     
@@ -299,7 +265,6 @@
     <script>
         // 滚动动画效果
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.website-card');
             const header = document.querySelector('header');
             const title = document.querySelector('h1');
             const subtitle = document.querySelector('header p');
@@ -311,25 +276,103 @@
                 subtitle.classList.add('visible');
             }, 100);
             
-            function checkVisibility() {
-                cards.forEach((card, index) => {
-                    const rect = card.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-                    
-                    if (rect.top < windowHeight * 0.85 && !card.classList.contains('visible')) {
-                        setTimeout(() => {
-                            card.classList.add('visible');
-                        }, index * 150);
-                    }
-                });
-            }
-            
-            // 初始检查
-            checkVisibility();
-            
-            // 滚动时检查
-            window.addEventListener('scroll', checkVisibility);
+            // 加载网页数据
+            loadWebsites();
         });
+
+        // 加载网页数据
+        function loadWebsites() {
+            fetch('http://localhost:8000/api/websites')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    renderWebsites(data);
+                }
+            })
+            .catch(error => {
+                console.error('加载网页数据失败:', error);
+                // 如果API调用失败，显示默认网页
+                renderDefaultWebsites();
+            });
+        }
+
+        // 渲染网页数据
+        function renderWebsites(websites) {
+            const grid = document.getElementById('websites-grid');
+            grid.innerHTML = '';
+
+            websites.forEach((website, index) => {
+                const card = document.createElement('div');
+                card.className = 'website-card';
+                card.innerHTML = `
+                    <h2>${website.title}</h2>
+                    <p>${website.description}</p>
+                    <a href="${website.url}" target="_blank">访问</a>
+                `;
+                grid.appendChild(card);
+
+                // 添加入场动画
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 150);
+            });
+
+            // 添加滚动监听
+            window.addEventListener('scroll', checkVisibility);
+        }
+
+        // 渲染默认网页
+        function renderDefaultWebsites() {
+            const defaultWebsites = [
+                {
+                    title: '随机点击游戏',
+                    description: '点击屏幕上随机出现的按钮，看你能多快点击到它们。',
+                    url: '#'
+                },
+                {
+                    title: '数字计数',
+                    description: '从1开始，一直数到你想停止为止。',
+                    url: '#'
+                },
+                {
+                    title: '颜色变化器',
+                    description: '点击按钮，随机改变页面背景颜色。',
+                    url: '#'
+                },
+                {
+                    title: '文字生成器',
+                    description: '随机生成无意义的句子，打发时间的好工具。',
+                    url: '#'
+                },
+                {
+                    title: '粒子效果',
+                    description: '观看屏幕上随机运动的粒子，放松心情。',
+                    url: '#'
+                },
+                {
+                    title: '时钟',
+                    description: '一个简单的数字时钟，显示当前时间。',
+                    url: '#'
+                }
+            ];
+
+            renderWebsites(defaultWebsites);
+        }
+
+        // 检查元素可见性
+        function checkVisibility() {
+            const cards = document.querySelectorAll('.website-card');
+            cards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                if (rect.top < windowHeight * 0.85 && !card.classList.contains('visible')) {
+                    setTimeout(() => {
+                        card.classList.add('visible');
+                    }, index * 150);
+                }
+            });
+        }
     </script>
 </body>
 </html>
